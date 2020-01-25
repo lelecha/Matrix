@@ -85,7 +85,7 @@ public class LoginFragment extends OnBoardingBaseFragment {
 
     @Override
     protected int getLayout() {
-        return 0;
+        return R.layout.fragment_login;
     }
 }
 
