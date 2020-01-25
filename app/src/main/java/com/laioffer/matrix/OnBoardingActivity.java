@@ -24,4 +24,10 @@ public class OnBoardingActivity extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(viewpager);
     }
+
+    // switch viewpage to #page
+    public void setCurrentPage(int page) {
+        viewpager.setCurrentItem(page);
+    }
+
 }
