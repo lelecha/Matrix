@@ -97,6 +97,13 @@ public class ControlPanel extends AppCompatActivity {
                         return true;
                     }
                 });
+        // add Fragment to the activity
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_frame, MainFragment.newInstance())
+                .commit();
+
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

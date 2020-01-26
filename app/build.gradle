@@ -27,7 +27,9 @@ dependencies {
     // lib for material library
     implementation 'com.google.android.material:material:1.0.0'
 //location
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'commons-codec:commons-codec:1.10'
 
     implementation 'com.google.firebase:firebase-database:19.2.0'
     implementation 'commons-codec:commons-codec:1.10'
