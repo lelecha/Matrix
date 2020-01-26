@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 /**
@@ -30,6 +31,8 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
     private View view;
     private GoogleMap googleMap;
     private LocationTracker locationTracker;
+    private FloatingActionButton fabReport;
+    private ReportDialog dialog;
 
     //Add instance to allow ControlPanel to fetch the MainFragment instance.
 
@@ -58,6 +61,15 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mapView = (MapView) view.findViewById(R.id.event_map_view);
+        fabReport = (FloatingActionButton)view.findViewById(R.id.fab);
+        fabReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //show dialog
+                showDialog(null, null);
+            }
+        });
+
         if (mapView != null) {
             mapView.onCreate(null);
             mapView.onResume();// needed to get the map to display immediately
@@ -98,6 +110,10 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
 
 
 
+    }
+    private void showDialog(String label, String prefillText) {
+        dialog = new ReportDialog(getContext());
+        dialog.show();
     }
 
     @Override
