@@ -36,7 +36,15 @@ public class ReportDialog extends Dialog {
     private EditText mCommentEditText;
     private ImageView mEventTypeImg;
     private TextView mTypeTextView;
+    private DialogCallBack mDialogCallBack;
+    interface DialogCallBack {
+        void onSubmit(String editString, String event_type);
+        void startCamera();
+    }
 
+    public void setDialogCallBack(DialogCallBack dialogCallBack) {
+        mDialogCallBack = dialogCallBack;
+    }
 
     public ReportDialog(@NonNull Context context) {
         this(context, R.style.MyAlertDialogStyle);
@@ -154,6 +162,21 @@ public class ReportDialog extends Dialog {
         mCommentEditText = (EditText) dialogView.findViewById(R.id.event_comment);
         mEventTypeImg = (ImageView) dialogView.findViewById(R.id.event_type_img);
         mTypeTextView = (TextView) dialogView.findViewById(R.id.event_type);
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialogCallBack.onSubmit(mCommentEditText.getText().toString(), mEventype);
+
+            }
+        });
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewSwitcher.showPrevious();
+            }
+        });
+
+
     }
 
 
