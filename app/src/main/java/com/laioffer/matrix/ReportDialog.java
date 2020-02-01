@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -108,6 +109,9 @@ public class ReportDialog extends Dialog {
 
         }
     }
+    public void updateImage(Bitmap bitmap) {
+        mImageCamera.setImageBitmap(bitmap);
+    }
 
     private void setupRecyclerView(View dialogView) {
         mRecyclerView = dialogView.findViewById(R.id.recycler_view);
@@ -176,6 +180,13 @@ public class ReportDialog extends Dialog {
             }
         });
 
+
+        mImageCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialogCallBack.startCamera();
+            }
+        });
 
     }
 
