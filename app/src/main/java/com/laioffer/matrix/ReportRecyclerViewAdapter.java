@@ -16,10 +16,11 @@ public class ReportRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private List<Item> mItems;
     private LayoutInflater mInflater;
 
+
     private OnClickListener mClickListener;
 
     public interface OnClickListener{
-        public void setItem(String item);
+        void setItem(String item);
     }
 
     public void setClickListener(ReportRecyclerViewAdapter.OnClickListener callback) {
@@ -56,6 +57,7 @@ public class ReportRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         viewHolder.mTextView.setText(mItems.get(position).getDrawable_label());
         viewHolder.mImageView.setImageResource(mItems.get(position).getDrawable_id());
 
+
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,6 +66,7 @@ public class ReportRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 }
             }
         });
+
     }
 
     // total number of cells

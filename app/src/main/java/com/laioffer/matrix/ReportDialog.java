@@ -11,7 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
-
+import android.widget.ViewSwitcher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +21,8 @@ public class ReportDialog extends Dialog {
     private int cy;
     private RecyclerView mRecyclerView;
     private ReportRecyclerViewAdapter mRecyclerViewAdapter;
+    private ViewSwitcher mViewSwitcher;
+    private String mEventype;
 
 
     public ReportDialog(@NonNull Context context) {
@@ -65,7 +67,13 @@ public class ReportDialog extends Dialog {
             }
         });
         setupRecyclerView(dialogView);
-
+        mViewSwitcher = (ViewSwitcher) dialogView.findViewById(R.id.viewSwitcher);
+    }
+    private void showNextViewSwitcher(String item) {
+        mEventype = item;
+        if (mViewSwitcher != null) {
+            mViewSwitcher.showNext();
+        }
     }
 
     private void setupRecyclerView(View dialogView) {
@@ -77,11 +85,13 @@ public class ReportDialog extends Dialog {
             @Override
             public void setItem(String item) {
                 // for switch item
+                showNextViewSwitcher(item);
             }
         });
 
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
     }
+
 
 
     private void animateDialog(View dialogView, boolean open) {
