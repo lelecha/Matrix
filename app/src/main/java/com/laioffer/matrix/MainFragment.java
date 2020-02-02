@@ -1,11 +1,17 @@
 package com.laioffer.matrix;
 
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
@@ -25,10 +31,16 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,6 +55,29 @@ import static android.app.Activity.RESULT_OK;
  */
 public class MainFragment extends Fragment implements OnMapReadyCallback, ReportDialog.DialogCallBack {
     private static final int REQUEST_CAPTURE_IMAGE = 100;
+    private final String path = Environment.getExternalStorageDirectory() + "/temp.png";
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
     private MapView mapView;
     private View view;
     private GoogleMap googleMap;
@@ -51,6 +86,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, Report
     private ReportDialog dialog;
     private FloatingActionButton fabFocus;
     private DatabaseReference database;
+
 
     //Add instance to allow ControlPanel to fetch the MainFragment instance.
 
@@ -73,6 +109,9 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, Report
         view = inflater.inflate(R.layout.fragment_main, container,
                 false);
         database = FirebaseDatabase.getInstance().getReference();
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
+        verifyStoragePermissions(getActivity());
         return view;
     }
 
@@ -152,6 +191,9 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, Report
     @Override
     public void onSubmit(String editString, String event_type) {
         String key = uploadEvent(Config.username, editString, event_type);
+        //upload image and link the image to the corresponding key
+        uploadImage(key);
+
     }
 
     @Override
@@ -256,6 +298,38 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, Report
         return key;
     }
 
+    //Upload image to cloud storage
+    private void uploadImage(final String key) {
+        File file = new File(path);
+        if (!file.exists()) {
+            dialog.dismiss();
+            return;
+        }
+
+
+        Uri uri = Uri.fromFile(file);
+        final StorageReference imgRef = storageRef.child("images/" + uri.getLastPathSegment() + "_" + System.currentTimeMillis());
+
+        imgRef.putFile(uri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                return imgRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                Uri downloadUri = task.getResult();
+                database.child("events").child(key).child("imgUri").
+                        setValue(downloadUri.toString());
+                File file = new File(path);
+                file.delete();
+                dialog.dismiss();
+            }
+        });
+    }
 
 }
 

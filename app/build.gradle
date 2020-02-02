@@ -24,6 +24,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
 
+    implementation 'com.google.firebase:firebase-storage:17.0.0'
+
     // lib for material library
     implementation 'com.google.android.material:material:1.0.0'
 //location
@@ -31,7 +33,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:17.0.0'
 //authentication
     implementation 'com.google.firebase:firebase-auth:17.0.0'
-
+    implementation 'com.google.firebase:firebase-storage:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'commons-codec:commons-codec:1.10'
